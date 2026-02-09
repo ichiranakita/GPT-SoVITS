@@ -521,7 +521,13 @@ def get_spepc(hps, filename, dtype, device, is_v2pro=False):
     # audio = torch.FloatTensor(audio)
 
     sr1 = int(hps.data.sampling_rate)
-    audio, sr0 = torchaudio.load(filename)
+    import soundfile as sf
+    audio, sr0 = sf.read(filename)
+    audio = torch.from_numpy(audio).float()
+    if audio.dim() == 1:
+        audio = audio.unsqueeze(0)
+    else:
+        audio = audio.T  # soundfile returns (samples, channels), we need (channels, samples)
     if sr0 != sr1:
         audio = audio.to(device)
         if audio.shape[0] == 2:
