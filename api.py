@@ -140,6 +140,8 @@ RESP: 无
 
 """
 
+from GPT_SoVITS.audio_utils import load_audio_safe
+
 import argparse
 import os
 import re
@@ -639,7 +641,7 @@ class DictToAttrRecursive(dict):
 
 def get_spepc(hps, filename, dtype, device, is_v2pro=False):
     sr1 = int(hps.data.sampling_rate)
-    audio, sr0 = torchaudio.load(filename)
+    audio, sr0 = load_audio_safe(filename)
     if sr0 != sr1:
         audio = audio.to(device)
         if audio.shape[0] == 2:

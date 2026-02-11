@@ -101,6 +101,22 @@ RESP:
 
 """
 
+import torchaudio
+import soundfile as sf
+import torch
+
+def _load_audio_replacement(filepath, *args, **kwargs):
+    audio, sr = sf.read(filepath)
+    audio = torch.from_numpy(audio).float()
+    if audio.dim() == 1:
+        audio = audio.unsqueeze(0)
+    else:
+        audio = audio.T
+    return audio, sr
+
+# 替换 torchaudio.load
+torchaudio.load = _load_audio_replacement
+
 import os
 import sys
 import traceback
